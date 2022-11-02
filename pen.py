@@ -5,6 +5,7 @@ from typing import Sequence
 
 class Recorder:
     def __init__(self):
+        self.segment_limit = 100  # max count of points at segment
         self.can_record = self.protect_record = False
 
         self.pen = Pen(self)
@@ -21,7 +22,7 @@ class Recorder:
         segment.append_point(point, self.pen)
         self.segments_recovery = []
 
-        if len(segment.points) == self.pen.segment_limit:
+        if len(segment.points) == self.segment_limit:
             self.abort_segment(point)
 
     def stop_record(self):
@@ -59,7 +60,11 @@ class Recorder:
 
         del self.segments[-1]
 
-        self.segments.append(self.segments_recovery[0])
+        recovery_segment = self.segments_recovery[0]
+        self.segments.append(recovery_segment)
+        self.pen.color = recovery_segment.color
+        self.pen.size = recovery_segment.size
+
         del self.segments_recovery[0]
 
     def abort_segment(self, prev_point: Sequence = None):
@@ -71,7 +76,6 @@ class Pen:
         self.recorder = recorder
         self.recorder.pen = self
 
-        self.segment_limit = 100  # max count of points at segment
         self.color = 0x000000
         self.size = 6
 
