@@ -28,7 +28,10 @@ class Recorder:
         if not self.segments[-1].is_empty():
             self.abort_segment()
 
-        self.segments[-1].prev_point = None  # needs for situation when reached segment limit and next segment is empty
+        # needs for situation when reached segment limit and next segment is empty
+        if len(self.segments) >= 2 and len(self.segments[-1].points) == 1 \
+                and self.segments[-2].points[-1] == self.segments[-1].points[-1]:
+            self.segments[-1].points.clear()
 
         if self.can_record:
             self.protect_record = True
@@ -80,9 +83,8 @@ class Pen:
 class Segment:
     def __init__(self, pen: Pen, prev_point: Sequence = None):
         self.color, self.size = pen.color, pen.size
-        self.prev_point = prev_point
 
-        self.points = []
+        self.points = [] if prev_point is None else [prev_point]
 
     def is_empty(self):
         return not self.points
@@ -91,23 +93,14 @@ class Segment:
         if self.points and self.points[-1] == point:
             return
 
-        if self.prev_point == point:
-            self.prev_point = None
-
         self.color, self.size = pen.color, pen.size
         self.points.append(point)
 
     def render(self, surface: SurfaceType):
-        points = self.points
-
-        if self.prev_point is not None:
-            points.insert(0, self.prev_point)
-            print(self.prev_point)
-
-        if len(points) >= 2:
-            draw_lines(surface, self.color, False, points, self.size)
-        elif len(points) == 1:
-            draw_circle(surface, self.color, points[0], self.size / 2)
+        if len(self.points) >= 2:
+            draw_lines(surface, self.color, False, self.points, self.size)
+        elif len(self.points) == 1:
+            draw_circle(surface, self.color, self.points[0], self.size / 2)
 
 
 __all__ = (
