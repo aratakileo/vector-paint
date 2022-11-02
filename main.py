@@ -4,7 +4,7 @@ import unicode
 import pygame
 
 pygame.init()
-display.set_caption("upaint")
+display.set_caption("Upaint")
 display.set_mode((800, 800), pygame.RESIZABLE)
 
 surface = display.get_surface()
