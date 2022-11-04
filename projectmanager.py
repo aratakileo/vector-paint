@@ -38,14 +38,14 @@ class ProjectManager:
         with open(f'project.{self.extension}', 'r', encoding='utf-8') as f:
             any_str = f.read()
 
-        head_ending_index = -1
+        metadata_end_index = -1
         for char in any_str:
-            head_ending_index += 1
+            metadata_end_index += 1
 
             if char == ';':
                 break
 
-        metadata = any_str[:head_ending_index].split(':')
+        metadata = any_str[:metadata_end_index].split(':')
 
         if metadata[0] != 'ver':
             raise ProjectManagerError('the project file is corrupted')
@@ -54,4 +54,4 @@ class ProjectManager:
             raise ProjectManagerError('this project version is not support!')
 
         self.canvas.recorder.stop_record()
-        self.canvas.apply_primitive(loads(any_str[head_ending_index + 1:])['canvas'])
+        self.canvas.apply_primitive(loads(any_str[metadata_end_index + 1:])['canvas'])
