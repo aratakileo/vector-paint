@@ -16,11 +16,11 @@ class Canvas:
         self.pen = None
 
     def __check_components(self):
-        if self.recorder is None:
-            raise CanvasError('recorder component is not defined!')
-
         if self.pen is None:
             raise CanvasError('pen component is not defined!')
+
+        if self.recorder is None:
+            raise CanvasError('recorder component is not defined!')
 
     def render(self, surface: SurfaceType):
         self.__check_components()
