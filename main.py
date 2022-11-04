@@ -1,18 +1,24 @@
+from core.canvas import Canvas
 from pygame import display
-from pen import *
+from core.recorder import *
+from core.pen import Pen
 import unicode
 import pygame
 
 pygame.init()
-display.set_caption("Upaint")
+display.set_caption("vPaint")  # vectorPaint
 display.set_mode((800, 800), pygame.RESIZABLE)
 
 surface = display.get_surface()
 clock = pygame.time.Clock()
 
-recorder = Recorder()
-pen = Pen(recorder)
+canvas = Canvas()
+# canvas.anti_aliasing = True
+
+pen = Pen(canvas)
 pen.color = 0x4caf50
+
+recorder = Recorder(canvas)
 
 while True:
     for e in pygame.event.get():
@@ -28,12 +34,14 @@ while True:
                 recorder.undo()
             elif e.unicode == unicode.CTRL_Y:
                 recorder.redo()
+            elif e.key == pygame.K_e:
+                pass  # TODO: the eraser functional
 
     recorder.try_record(pygame.mouse.get_pos())
 
     surface.fill(0xffffff)
 
-    pen.render(surface)
+    canvas.render(surface)
 
     display.flip()
     clock.tick(60)

@@ -1,16 +1,25 @@
-from pygame.draw import lines as draw_lines, circle as draw_circle
+from pygame.draw import lines as draw_lines, circle as draw_circle, aalines as draw_aalines
 from pygame.surface import SurfaceType
 from typing import Sequence
+from .canvas import *
+from .pen import Pen
 
 
 class Recorder:
-    def __init__(self):
+    def __init__(self, canvas: Canvas):
+        # Config
         self.segment_limit = 100  # max count of points at segment
+
+        # Other
+        self.canvas = canvas
+        self.canvas.recorder = self
+
+        if self.canvas.pen is None:
+            raise CanvasError('need to create pen firstly')
+
         self.can_record = self.protect_record = False
 
-        self.pen = Pen(self)
-
-        self.segments = [Segment(self.pen)]
+        self.segments = [Segment(self.canvas.pen)]
         self.segments_recovery = []
 
     def record(self, point: Sequence):
@@ -19,7 +28,7 @@ class Recorder:
 
         segment = self.segments[-1]
 
-        segment.append_point(point, self.pen)
+        segment.append_point(point, self.canvas.pen)
         self.segments_recovery = []
 
         if len(segment.points) == self.segment_limit:
@@ -62,26 +71,17 @@ class Recorder:
 
         recovery_segment = self.segments_recovery[0]
         self.segments.append(recovery_segment)
-        self.pen.color = recovery_segment.color
-        self.pen.size = recovery_segment.size
+        self.canvas.pen.color = recovery_segment.color
+        self.canvas.pen.size = recovery_segment.size
 
         del self.segments_recovery[0]
 
     def abort_segment(self, prev_point: Sequence = None):
-        self.segments.append(Segment(self.pen, prev_point))
-
-
-class Pen:
-    def __init__(self, recorder: Recorder):
-        self.recorder = recorder
-        self.recorder.pen = self
-
-        self.color = 0x000000
-        self.size = 6
+        self.segments.append(Segment(self.canvas.pen, prev_point))
 
     def render(self, surface: SurfaceType):
-        for segment in self.recorder.segments:
-            segment.render(surface)
+        for segment in self.segments:
+            segment.render(surface, self.canvas.anti_aliasing)
 
 
 class Segment:
@@ -100,15 +100,15 @@ class Segment:
         self.color, self.size = pen.color, pen.size
         self.points.append(point)
 
-    def render(self, surface: SurfaceType):
+    def render(self, surface: SurfaceType, anti_aliasing=False):
         if len(self.points) >= 2:
+            if anti_aliasing:
+                draw_aalines(surface, self.color, False, self.points, self.size)
+                return
+
             draw_lines(surface, self.color, False, self.points, self.size)
         elif len(self.points) == 1:
             draw_circle(surface, self.color, self.points[0], self.size / 2)
 
 
-__all__ = (
-    'Pen',
-    'Recorder',
-    'Segment'
-)
+__all__ = 'Recorder', 'Segment'
