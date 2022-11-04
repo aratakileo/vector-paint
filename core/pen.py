@@ -11,5 +11,15 @@ class Pen:
         self.canvas = canvas
         self.canvas.pen = self
 
+    def to_primitive(self):
+        return {
+            'color': self.color,
+            'size': self.size
+        }
+
+    def apply_primitive(self, primitive: dict):
+        self.color = primitive['color']
+        self.size = primitive['size']
+
 
 __all__ = 'Pen',

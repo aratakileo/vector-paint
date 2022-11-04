@@ -1,9 +1,11 @@
+from projectmanager import ProjectManager
 from core.canvas import Canvas
 from pygame import display
 from core.recorder import *
 from core.pen import Pen
 import unicode
 import pygame
+
 
 pygame.init()
 display.set_caption("vPaint")  # vectorPaint
@@ -20,6 +22,8 @@ pen.color = 0x4caf50
 
 recorder = Recorder(canvas)
 
+project_manager = ProjectManager(canvas)
+
 while True:
     for e in pygame.event.get():
         if e.type == pygame.QUIT:
@@ -34,6 +38,10 @@ while True:
                 recorder.undo()
             elif e.unicode == unicode.CTRL_Y:
                 recorder.redo()
+            elif e.unicode == unicode.CTRL_S:
+                project_manager.save()
+            elif e.unicode == unicode.CTRL_L:
+                project_manager.load()
             elif e.key == pygame.K_e:
                 pass  # TODO: the eraser functional
 

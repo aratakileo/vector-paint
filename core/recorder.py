@@ -20,7 +20,7 @@ class Recorder:
         self.can_record = self.protect_record = False
 
         self.segments = [Segment(self.canvas.pen)]
-        self.segments_recovery = []
+        self.redo_segments = []
 
     def record(self, point: Sequence):
         if not self.can_record or self.protect_record:
@@ -29,7 +29,7 @@ class Recorder:
         segment = self.segments[-1]
 
         segment.append_point(point, self.canvas.pen)
-        self.segments_recovery = []
+        self.clear_redo_data()
 
         if len(segment.points) == self.segment_limit:
             self.abort_segment(point)
@@ -58,23 +58,26 @@ class Recorder:
 
         self.stop_record()
 
-        self.segments_recovery.insert(0, self.segments[-2])
+        self.redo_segments.insert(0, self.segments[-2])
         del self.segments[-2]
 
     def redo(self):
-        if not self.segments_recovery:
+        if not self.redo_segments:
             return
 
         self.stop_record()
 
         del self.segments[-1]
 
-        recovery_segment = self.segments_recovery[0]
+        recovery_segment = self.redo_segments[0]
         self.segments.append(recovery_segment)
         self.canvas.pen.color = recovery_segment.color
         self.canvas.pen.size = recovery_segment.size
 
-        del self.segments_recovery[0]
+        del self.redo_segments[0]
+
+    def clear_redo_data(self):
+        self.redo_segments = []
 
     def abort_segment(self, prev_point: Sequence = None):
         self.segments.append(Segment(self.canvas.pen, prev_point))
@@ -83,12 +86,33 @@ class Recorder:
         for segment in self.segments:
             segment.render(surface, self.canvas.anti_aliasing)
 
+    def to_primitive(self):
+        return [segment.to_primitive() for segment in self.segments[:-1]]
+
+    def apply_primitive(self, primitive: list):
+        self.clear_redo_data()
+        self.segments = [
+                            Segment.from_primitive(
+                                primitive_segment,
+                                self.canvas.pen
+                            ) for primitive_segment in primitive
+                        ] + [Segment(self.canvas.pen)]
+
 
 class Segment:
     def __init__(self, pen: Pen, prev_point: Sequence = None):
         self.color, self.size = pen.color, pen.size
 
         self.points = [] if prev_point is None else [prev_point]
+
+    @staticmethod
+    def from_primitive(primitive: dict, pen: Pen):
+        segment = Segment(pen)
+        segment.color = primitive['color']
+        segment.size = primitive['size']
+        segment.points = primitive['points']
+
+        return segment
 
     def is_empty(self):
         return not self.points
@@ -109,6 +133,13 @@ class Segment:
             draw_lines(surface, self.color, False, self.points, self.size)
         elif len(self.points) == 1:
             draw_circle(surface, self.color, self.points[0], self.size / 2)
+
+    def to_primitive(self):
+        return {
+            'color': self.color,
+            'size': self.size,
+            'points': self.points
+        }
 
 
 __all__ = 'Recorder', 'Segment'
