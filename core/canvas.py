@@ -9,7 +9,7 @@ class CanvasError(Exception):
 class Canvas:
     def __init__(self):
         # Config
-        self.anti_aliasing = False  # if enabled then impossible to set pen size
+        self.antialiasing = False  # if enabled then impossible to set pen size
 
         # Data
         self.pen = None

@@ -15,7 +15,7 @@ surface = display.get_surface()
 clock = pygame.time.Clock()
 
 canvas = Canvas()
-# canvas.anti_aliasing = True
+# canvas.antialiasing = True
 
 pen = Pen(canvas)
 pen.color = 0x4caf50

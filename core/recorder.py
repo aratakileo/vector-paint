@@ -84,7 +84,7 @@ class Recorder:
 
     def render(self, surface: SurfaceType):
         for segment in self.segments:
-            segment.render(surface, self.canvas.anti_aliasing)
+            segment.render(surface, self.canvas.antialiasing)
 
     def to_primitive(self):
         return [segment.to_primitive() for segment in self.segments[:-1]]
@@ -124,9 +124,9 @@ class Segment:
         self.color, self.size = pen.color, pen.size
         self.points.append(point)
 
-    def render(self, surface: SurfaceType, anti_aliasing=False):
+    def render(self, surface: SurfaceType, antialiasing=False):
         if len(self.points) >= 2:
-            if anti_aliasing:
+            if antialiasing:
                 draw_aalines(surface, self.color, False, self.points, self.size)
                 return
 
