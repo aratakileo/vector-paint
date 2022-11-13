@@ -1,9 +1,10 @@
 from projectmanager import ProjectManager
 from core.canvas import Canvas
-from pygame import display
+from pygex.input import Input
+from pygex.mouse import Mouse
 from core.recorder import *
+from pygame import display
 from core.pen import Pen
-import unicode
 import pygame
 
 
@@ -13,6 +14,9 @@ display.set_mode((800, 800), pygame.RESIZABLE)
 
 surface = display.get_surface()
 clock = pygame.time.Clock()
+
+mouse = Mouse()
+input = Input()
 
 canvas = Canvas()
 # canvas.antialiasing = True
@@ -29,21 +33,23 @@ while True:
         if e.type == pygame.QUIT:
             exit()
 
-        if e.type == pygame.MOUSEBUTTONDOWN and e.button == pygame.BUTTON_LEFT:
-            recorder.can_record = True
-        elif e.type == pygame.MOUSEBUTTONUP and e.button == pygame.BUTTON_LEFT:
-            recorder.can_record = recorder.protect_record = False
-        elif e.type == pygame.KEYUP:
-            if e.unicode == unicode.CTRL_Z:
-                recorder.undo()
-            elif e.unicode == unicode.CTRL_Y:
-                recorder.redo()
-            elif e.unicode == unicode.CTRL_S:
-                project_manager.save()
-            elif e.unicode == unicode.CTRL_L:
-                project_manager.load()
-            elif e.key == pygame.K_e:
-                pass  # TODO: the eraser functional
+        input.process_event(e)
+        mouse.process_event(e)
+
+    if mouse.left_is_up:
+        recorder.protect_record = False
+
+    recorder.can_record = mouse.left_is_hold
+
+    if input.is_hold(Input.GK_CTRL):
+        if input.is_applying(pygame.K_z):
+            recorder.undo()
+        elif input.is_applying(pygame.K_y):
+            recorder.redo()
+        elif input.is_up(pygame.K_s):
+            project_manager.save()
+        elif input.is_up(pygame.K_l):
+            project_manager.load()
 
     recorder.try_record(pygame.mouse.get_pos())
 
@@ -52,4 +58,6 @@ while True:
     canvas.render(surface)
 
     display.flip()
+    input.flip()
+    mouse.flip()
     clock.tick(60)
