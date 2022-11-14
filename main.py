@@ -32,7 +32,7 @@ while True:
 
     recorder.can_record = get_mouse().left_is_hold
 
-    if get_input().is_hold(get_input().GK_CTRL):
+    if get_input().is_hold(Input.GK_CTRL):
         if get_input().is_applying(K_z):
             recorder.undo()
         elif get_input().is_applying(K_y):
