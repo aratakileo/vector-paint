@@ -1,22 +1,17 @@
+from pygame.constants import RESIZABLE, K_z, K_l, K_s, K_y
+from pygame.event import get as get_event
 from projectmanager import ProjectManager
 from core.canvas import Canvas
-from pygex.input import Input
-from pygex.mouse import Mouse
 from core.recorder import *
 from pygame import display
 from core.pen import Pen
-import pygame
+from pygex import *
 
 
-pygame.init()
 display.set_caption("vPaint")  # vectorPaint
-display.set_mode((800, 800), pygame.RESIZABLE)
+display.set_mode((800, 800), RESIZABLE)
 
 surface = display.get_surface()
-clock = pygame.time.Clock()
-
-mouse = Mouse()
-input = Input()
 
 canvas = Canvas()
 # canvas.antialiasing = True
@@ -29,35 +24,26 @@ recorder = Recorder(canvas)
 project_manager = ProjectManager(canvas)
 
 while True:
-    for e in pygame.event.get():
-        if e.type == pygame.QUIT:
-            exit()
+    for e in get_event():
+        process_event(e)
 
-        input.process_event(e)
-        mouse.process_event(e)
-
-    if mouse.left_is_up:
+    if get_mouse().left_is_up:
         recorder.protect_record = False
 
-    recorder.can_record = mouse.left_is_hold
+    recorder.can_record = get_mouse().left_is_hold
 
-    if input.is_hold(Input.GK_CTRL):
-        if input.is_applying(pygame.K_z):
+    if get_input().is_hold(get_input().GK_CTRL):
+        if get_input().is_applying(K_z):
             recorder.undo()
-        elif input.is_applying(pygame.K_y):
+        elif get_input().is_applying(K_y):
             recorder.redo()
-        elif input.is_up(pygame.K_s):
+        elif get_input().is_up(K_s):
             project_manager.save()
-        elif input.is_up(pygame.K_l):
+        elif get_input().is_up(K_l):
             project_manager.load()
 
-    recorder.try_record(pygame.mouse.get_pos())
-
-    surface.fill(0xffffff)
+    recorder.try_record(get_mouse().get_pos())
 
     canvas.render(surface)
 
-    display.flip()
-    input.flip()
-    mouse.flip()
-    clock.tick(60)
+    flip(0xffffff, 60)
