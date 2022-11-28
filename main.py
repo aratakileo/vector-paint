@@ -1,20 +1,21 @@
-from pygame.constants import RESIZABLE, K_z, K_l, K_s, K_y
+from pygame.constants import K_z, K_l, K_s, K_F1, K_F11
 from pygame.event import get as get_event
 from projectmanager import ProjectManager
+from pygex.gui.toast import Toast
 from core.canvas import Canvas
+from pygex.input import Input
 from core.recorder import *
-from pygame import display
 from core.pen import Pen
-from pygex import *
+from pygex import Window
 
 
-display.set_caption("vPaint")  # vectorPaint
-display.set_mode((800, 800), RESIZABLE)
+window = Window(title='vPaint')
+window.bg_color = 0xffffff
+window.fps_limit = 60
 
-surface = display.get_surface()
+fullscreen_toast = Toast('To exit full screen press [F11]')
 
 canvas = Canvas()
-# canvas.antialiasing = True
 
 pen = Pen(canvas)
 pen.color = 0x4caf50
@@ -25,25 +26,37 @@ project_manager = ProjectManager(canvas)
 
 while True:
     for e in get_event():
-        process_event(e)
+        window.process_event(e)
 
-    if get_mouse().left_is_up:
+    if window.mouse.left_is_up:
         recorder.protect_record = False
 
-    recorder.can_record = get_mouse().left_is_hold
+    recorder.can_record = window.mouse.left_is_hold
 
-    if get_input().is_hold(Input.GK_CTRL):
-        if get_input().is_applying(K_z):
-            recorder.undo()
-        elif get_input().is_applying(K_y):
-            recorder.redo()
-        elif get_input().is_up(K_s):
+    if window.input.is_hold(Input.GK_CTRL):
+        if window.input.is_applying(K_z):
+            if window.input.is_hold(Input.GK_SHIFT):
+                recorder.redo()
+            else:
+                recorder.undo()
+        elif window.input.is_up(K_s):
             project_manager.save()
-        elif get_input().is_up(K_l):
+            window.show_toast('Project saved!')
+        elif window.input.is_up(K_l):
             project_manager.load()
+            window.show_toast('Project loaded!')
+    elif window.input.is_up(K_F1):
+        window.take_screenshot()
+    elif window.input.is_up(K_F11):
+        window.fullscreen = not window.fullscreen
 
-    recorder.try_record(get_mouse().get_pos())
+        if window.fullscreen:
+            fullscreen_toast.show()
+        else:
+            fullscreen_toast.cancel()
 
-    canvas.render(surface)
+    recorder.try_record(window.mouse.pos)
 
-    flip(0xffffff, 60)
+    canvas.render(window.surface)
+
+    window.flip()
