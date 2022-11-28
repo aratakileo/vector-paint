@@ -45,8 +45,6 @@ while True:
         elif window.input.is_up(K_l):
             project_manager.load()
             window.show_toast('Project loaded!')
-    elif window.input.is_up(K_F1):
-        window.take_screenshot()
     elif window.input.is_up(K_F11):
         window.fullscreen = not window.fullscreen
 
@@ -58,5 +56,8 @@ while True:
     recorder.try_record(window.mouse.pos)
 
     canvas.render(window.surface)
+
+    if window.input.is_up(K_F1):
+        window.take_screenshot()
 
     window.flip()
