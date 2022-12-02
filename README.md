@@ -1,4 +1,4 @@
-# vpaint
+# Vector paint
 The extended vector drawing application directed with pygame
 ![](preview/preview-1.png)
 
