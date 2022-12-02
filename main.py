@@ -9,7 +9,7 @@ from core.pen import Pen
 from pygex import Window
 
 
-window = Window(title='vPaint')
+window = Window(title='VectorPaint')
 window.bg_color = 0xffffff
 window.fps_limit = 60
 
