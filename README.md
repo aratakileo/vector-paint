@@ -1,5 +1,6 @@
-# upaint
+# vpaint
 The extended vector drawing application directed with pygame
+![](preview/preview-1.png)
 
 ### How to use
 - Press <img src="https://github.com/teacondemns/static.pexty.xyz/blob/main/src/icon/controller/mouse-left.png?raw=true" height="20"/> and move <img src="https://github.com/teacondemns/static.pexty.xyz/blob/main/src/icon/controller/mouse.png?raw=true" height="20"/> to draw
