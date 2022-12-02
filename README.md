@@ -10,5 +10,5 @@ The extended vector drawing application directed with pygame
 
 ### Requirements
 - `python >= 3.10`
-- `pygame >= 2.0`
+- `pygame >= 2.0.1`
 - [`pygex >= 0.1`](https://github.com/teacondemns/pygex)
