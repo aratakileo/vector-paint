@@ -1,33 +1,28 @@
 from pygame.constants import K_z, K_l, K_s, K_F1, K_F11
-from pygame.event import get as get_event
 from projectmanager import ProjectManager
+from pygex.color import GREEN, WHITE
+from core.recorder import Recorder
 from pygex.gui.toast import Toast
 from core.canvas import Canvas
 from pygex.input import Input
-from core.recorder import *
 from core.pen import Pen
 from pygex import Window
 
 
 window = Window(title='VectorPaint')
-window.bg_color = 0xffffff
-window.fps_limit = 60
+window.bg_color = WHITE
+window.fps_limit = 120
 
 fullscreen_toast = Toast('To exit full screen press [F11]')
 
 canvas = Canvas()
-
 pen = Pen(canvas)
-pen.color = 0x4caf50
+pen.color = GREEN
 
 recorder = Recorder(canvas)
-
 project_manager = ProjectManager(canvas)
 
 while True:
-    for e in get_event():
-        window.process_event(e)
-
     if window.mouse.left_is_up:
         recorder.protect_record = False
 
