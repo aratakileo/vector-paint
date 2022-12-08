@@ -1,12 +1,10 @@
 from pygame.constants import K_z, K_l, K_s, K_F1, K_F11
+from pygex import Window, Toast, GK_CTRL, GK_SHIFT
 from projectmanager import ProjectManager
 from pygex.color import GREEN, WHITE
 from core.recorder import Recorder
-from pygex.gui.toast import Toast
 from core.canvas import Canvas
-from pygex.input import Input
 from core.pen import Pen
-from pygex import Window
 
 
 window = Window(title='VectorPaint')
@@ -28,9 +26,9 @@ while True:
 
     recorder.can_record = window.mouse.left_is_hold
 
-    if window.input.is_hold(Input.GK_CTRL):
+    if window.input.is_hold(GK_CTRL):
         if window.input.is_applying(K_z):
-            if window.input.is_hold(Input.GK_SHIFT):
+            if window.input.is_hold(GK_SHIFT):
                 recorder.redo()
             else:
                 recorder.undo()
