@@ -2,6 +2,7 @@ from pygame.constants import K_z, K_l, K_s, K_F1, K_F11
 from pygex.color import COLOR_GREEN, COLOR_WHITE
 from projectmanager import ProjectManager
 from pygex.input import GK_CTRL, GK_SHIFT
+from pygex.debugpanel import DebugPanel
 from core.recorder import Recorder
 from pygex.gui.toast import Toast
 from pygex.window import Window
@@ -13,6 +14,7 @@ window = Window(title='VectorPaint', fps_limit=120)
 window.bg_color = COLOR_WHITE
 
 fullscreen_toast = Toast('To exit full screen press [F11]')
+debug_panel = DebugPanel()
 
 canvas = Canvas()
 pen = Pen(canvas)
@@ -50,6 +52,8 @@ while True:
     recorder.try_record(window.mouse.pos)
 
     canvas.render(window.surface)
+
+    window.render_views()
 
     if window.input.is_up(K_F1):
         window.take_screenshot()
