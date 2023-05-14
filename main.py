@@ -1,21 +1,22 @@
 from pygame.constants import K_z, K_l, K_s, K_F1, K_F11
-from pygex import Window, Toast, GK_CTRL, GK_SHIFT
+from pygex.color import COLOR_GREEN, COLOR_WHITE
 from projectmanager import ProjectManager
-from pygex.color import C_GREEN, C_WHITE
+from pygex.input import GK_CTRL, GK_SHIFT
 from core.recorder import Recorder
+from pygex.gui.toast import Toast
+from pygex.window import Window
 from core.canvas import Canvas
 from core.pen import Pen
 
 
-window = Window(title='VectorPaint')
-window.bg_color = C_WHITE
-window.fps_limit = 120
+window = Window(title='VectorPaint', fps_limit=120)
+window.bg_color = COLOR_WHITE
 
 fullscreen_toast = Toast('To exit full screen press [F11]')
 
 canvas = Canvas()
 pen = Pen(canvas)
-pen.color = C_GREEN
+pen.color = COLOR_GREEN
 
 recorder = Recorder(canvas)
 project_manager = ProjectManager(canvas)
