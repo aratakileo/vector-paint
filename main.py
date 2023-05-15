@@ -23,7 +23,7 @@ pen.color = COLOR_GREEN
 recorder = Recorder(canvas)
 project_manager = ProjectManager(canvas)
 
-while True:
+while window.is_running:
     if window.mouse.left_is_up:
         recorder.protect_record = False
 
